@@ -1,4 +1,5 @@
 // Copyright 2021 Jonne Kokkonen
+// Copyright (C) 2025 CodeAsm - Nico Vijlbrief
 // Released under the MIT licence, https://opensource.org/licenses/MIT
 
 #ifndef RENDER_H_
