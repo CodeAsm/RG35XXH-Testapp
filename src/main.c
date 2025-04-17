@@ -1,4 +1,5 @@
 // Copyright 2021 Jonne Kokkonen
+// Copyright (C) 2025 CodeAsm - Nico Vijlbrief
 // Released under the MIT licence, https://opensource.org/licenses/MIT
 
 /* Uncomment this line to enable debug messages or call make with `make

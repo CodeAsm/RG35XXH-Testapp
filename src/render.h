@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "command.h"
 
-int initialize_sdl(int init_fullscreen, int init_use_gpu);
+int initialize_sdl(const int init_fullscreen, const int init_use_gpu);
 void close_renderer();
 
 void draw_waveform(struct draw_oscilloscope_waveform_command *command);
@@ -25,5 +25,11 @@ void display_keyjazz_overlay(uint8_t show, uint8_t base_octave, uint8_t velocity
 void screensaver_init();
 void screensaver_draw();
 void screensaver_destroy();
+
+// New functions for joystick handling
+void cleanup_sdl();
+
+// Optional: Expose joystick variable if needed elsewhere
+// extern SDL_Joystick *joystick;
 
 #endif
