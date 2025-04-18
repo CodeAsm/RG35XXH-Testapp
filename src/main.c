@@ -11,7 +11,8 @@
 
 #include "SDL2_inprint.h"
 #include "config.h"
-#include "input.h"
+//TODO #include "input.h"
+//#include "gamecontrollers.h" //TODO
 #include "render.h"
 
 enum state { QUIT, WAIT_FOR_DEVICE, RUN };
@@ -56,6 +57,9 @@ int main(const int argc, char *argv[]) {
   if (initialize_sdl(conf.init_fullscreen, conf.init_use_gpu) == -1)
     run = QUIT;
 
+  // initial scan for (existing) game controllers
+  //gamecontrollers_initialize(); TODO
+
 
 #ifdef DEBUG_MSG
   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
@@ -85,6 +89,7 @@ int main(const int argc, char *argv[]) {
         if (SDL_GetTicks() - ticks_update_screen > 16) {
           ticks_update_screen = SDL_GetTicks();
           screensaver_draw();
+          handle_input(); //TODO
           render_screen();
         }
 
@@ -95,26 +100,29 @@ int main(const int argc, char *argv[]) {
       // classic startup behaviour, exit if device is not found
       
      
+       //TODO gamecontrollers_close();
         close_renderer();
         kill_inline_font();
         SDL_Quit();
         return -1;
-      }
+    }
     
 
     // main loop
+    /*
     while (run == RUN) {
         //TODO
       handle_input();
       render_screen();
       SDL_Delay(conf.idle_ms);
-    }
+    }*/
   } while (run > QUIT);
   // main loop end
 
   // exit, clean up
   SDL_Log("Shutting down\n");\
   close_renderer();
+//TODO  gamecontrollers_close();
 //  close_serial_port();
   SDL_Quit();
   return 0;

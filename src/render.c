@@ -34,6 +34,7 @@ static int texture_width = 320;
 static int texture_height = 240;
 
 static char input_text[64] = "No input";
+static char version_text[64] = "CodeAsm v0.1.0";
 
 struct inline_font *fonts[5] = {&font_v1_small, &font_v1_large, &font_v2_small, &font_v2_large,
                                 &font_v2_huge};
@@ -49,6 +50,26 @@ int initialize_sdl(const int init_fullscreen, const int init_use_gpu) {
     SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "SDL_Init: %s\n", SDL_GetError());
     return -1;
   }
+
+// Open the first available joystick
+    if (SDL_NumJoysticks() < 1) {
+        printf("No joysticks connected!\n");
+         snprintf(input_text, sizeof(input_text), "No joysticks connected!");
+               
+    } else {
+        SDL_Joystick *joystick = SDL_JoystickOpen(0);
+        if (joystick == NULL) {
+            printf("Failed to open joystick! SDL_Error: %s\n", SDL_GetError());
+             snprintf(input_text, sizeof(input_text), "Failed to open joystick! SDL_Error: %s", SDL_GetError());
+        } else {
+            printf("Joystick connected: %s\n", SDL_JoystickName(joystick));
+            snprintf(input_text, sizeof(input_text), "Joystick connected: %s", SDL_JoystickName(joystick));
+        }
+    }
+
+
+
+
 
   // SDL documentation recommends this
   atexit(SDL_Quit);
@@ -314,6 +335,7 @@ void render_screen() {
 
     // Display input text
     inprint(rend, input_text, 10, 30, 0xFFFFFF, 0x000000);
+    inprint(rend, version_text, 10, 60, 0xFFFFFF, 0x000000);
 
     SDL_RenderPresent(rend);
     SDL_SetRenderTarget(rend, maintexture);
@@ -347,27 +369,150 @@ void screensaver_destroy() {
 }
 
 void handle_input() {
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    switch (event.type) {
-    case SDL_KEYDOWN:
-      snprintf(input_text, sizeof(input_text), "Key Down: %s", SDL_GetKeyName(event.key.keysym.sym));
-      break;
-    case SDL_KEYUP:
-      snprintf(input_text, sizeof(input_text), "Key Up: %s", SDL_GetKeyName(event.key.keysym.sym));
-      break;
-    case SDL_MOUSEBUTTONDOWN:
-      snprintf(input_text, sizeof(input_text), "Mouse Button Down: %d", event.button.button);
-      break;
-    case SDL_MOUSEBUTTONUP:
-      snprintf(input_text, sizeof(input_text), "Mouse Button Up: %d", event.button.button);
-      break;
-    case SDL_QUIT:
-      snprintf(input_text, sizeof(input_text), "Quit Event");
-      break;
-    default:
-      snprintf(input_text, sizeof(input_text), "Unknown Event");
-      break;
+   SDL_Event e;
+    
+    snprintf(version_text, sizeof(version_text), "ProFishinh");
+               
+    // Poll SDL events
+    while (SDL_PollEvent(&e)) {
+        switch (e.type) {
+            case SDL_QUIT:
+                printf("Quit event detected!\n");
+                exit(0);
+                break;
+            case SDL_KEYDOWN:
+                printf("Key %d pressed\n", e.key.keysym.sym);
+                snprintf(input_text, sizeof(input_text), "Key %d pressed", e.key.keysym.sym);
+                break;
+            case SDL_KEYUP:
+                printf("Key %d released\n", e.key.keysym.sym);
+                snprintf(input_text, sizeof(input_text), "Key %d released", e.key.keysym.sym);
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+                printf("Dpad down pressed\n");
+                snprintf(input_text, sizeof(input_text), "Dpad down pressed");
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_UP:
+                printf("Dpad up pressed\n");
+                snprintf(input_text, sizeof(input_text), "Dpad up pressed");
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+                printf("Dpad left pressed\n");
+                snprintf(input_text, sizeof(input_text), "Dpad left pressed");
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+                printf("Dpad right pressed\n");
+                snprintf(input_text, sizeof(input_text), "Dpad right pressed");
+                break;
+            
+            case SDL_JOYBUTTONDOWN:
+                printf("Button %d pressed\n", e.jbutton.button);
+                snprintf(input_text, sizeof(input_text), "Button %d pressed", e.jbutton.button);
+                break;
+
+            case SDL_JOYBUTTONUP:
+                printf("Button %d released\n", e.jbutton.button);
+                snprintf(input_text, sizeof(input_text), "Button %d depressed", e.jbutton.button);
+                if (e.jbutton.button == 11 || e.jbutton.button == 16) {
+                    printf("We are going to quit\n");
+                    snprintf(input_text, sizeof(input_text), "Quit event detected!");
+                    SDL_Delay(5000); //#TODO, yeah, we never print the above.
+                    exit(0);
+                }
+                break;
+            case SDL_JOYDEVICEADDED:
+                printf("Joystick device added\n");
+                snprintf(input_text, sizeof(input_text), "Joystick device added");
+                break;
+            case SDL_JOYDEVICEREMOVED:
+                printf("Joystick device removed\n");
+                snprintf(input_text, sizeof(input_text), "Joystick device removed");
+                break;
+
+            case SDL_JOYAXISMOTION:
+                printf("Joystick axis %d moved to %d\n", e.jaxis.axis, e.jaxis.value);
+                snprintf(input_text, sizeof(input_text), "Axis %d moved to %d", e.jaxis.axis, e.jaxis.value);
+                break;
+            case SDL_JOYHATMOTION:
+                printf("Joystick hat %d moved to %d\n", e.jhat.hat, e.jhat.value);
+                snprintf(input_text, sizeof(input_text), "Hat %d moved to %d", e.jhat.hat, e.jhat.value);
+                break;
+            case SDL_WINDOWEVENT:
+                if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    printf("Window resized to %dx%d\n", e.window.data1, e.window.data2);
+                    snprintf(input_text, sizeof(input_text), "Window resized to %dx%d", e.window.data1, e.window.data2);
+                    check_and_adjust_window_and_texture_size(e.window.data1, e.window.data2);
+                }
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+
+                printf("Mouse button %d pressed at (%d, %d)\n", e.button.button, e.button.x, e.button.y);
+                snprintf(input_text, sizeof(input_text), "Mouse button %d pressed at (%d, %d)", e.button.button, e.button.x, e.button.y);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                printf("Mouse button %d released at (%d, %d)\n", e.button.button, e.button.x, e.button.y);
+                snprintf(input_text, sizeof(input_text), "Mouse button %d released at (%d, %d)", e.button.button, e.button.x, e.button.y);
+                break;
+            case SDL_MOUSEMOTION:
+                printf("Mouse moved to (%d, %d)\n", e.motion.x, e.motion.y);
+                snprintf(input_text, sizeof(input_text), "Mouse moved to (%d, %d)", e.motion.x, e.motion.y);
+                break;
+            case SDL_MOUSEWHEEL:
+                printf("Mouse wheel scrolled %d\n", e.wheel.y);
+                snprintf(input_text, sizeof(input_text), "Mouse wheel scrolled %d", e.wheel.y);
+                break;
+            case SDL_TEXTINPUT:
+                printf("Text input: %s\n", e.text.text);
+                snprintf(input_text, sizeof(input_text), "Text input: %s", e.text.text);
+                break;
+            case SDL_TEXTEDITING:
+                printf("Text editing: %s\n", e.edit.text);
+                snprintf(input_text, sizeof(input_text), "Text editing: %s", e.edit.text);
+                break;
+            case SDL_CONTROLLERDEVICEADDED:
+                printf("Controller device added\n");
+                snprintf(input_text, sizeof(input_text), "Controller device added");
+                break;
+            case SDL_CONTROLLERDEVICEREMOVED:
+                printf("Controller device removed\n");
+                snprintf(input_text, sizeof(input_text), "Controller device removed");
+                break;
+            case SDL_CONTROLLERDEVICEREMAPPED:
+                printf("Controller device remapped\n");
+                snprintf(input_text, sizeof(input_text), "Controller device remapped");
+                break;
+            case SDL_CONTROLLERAXISMOTION:
+                printf("Controller axis %d moved to %d\n", e.caxis.axis, e.caxis.value);
+                snprintf(input_text, sizeof(input_text), "Controller axis %d moved to %d", e.caxis.axis, e.caxis.value);
+                break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                printf("Controller button %d pressed\n", e.cbutton.button);
+                snprintf(input_text, sizeof(input_text), "Controller button %d pressed", e.cbutton.button);
+                break;
+            case SDL_CONTROLLERBUTTONUP:
+                printf("Controller button %d released\n", e.cbutton.button);
+                snprintf(input_text, sizeof(input_text), "Controller button %d released", e.cbutton.button);
+                break;
+            case SDL_CONTROLLERTOUCHPADDOWN:
+                printf("Controller touchpad %d pressed at (%f, %f)\n", e.ctouchpad.touchpad,
+                       e.ctouchpad.x, e.ctouchpad.y);
+                snprintf(input_text, sizeof(input_text), "Controller touchpad %d pressed at (%f, %f)", e.ctouchpad.touchpad,
+                       e.ctouchpad.x, e.ctouchpad.y);
+                break;
+            case SDL_CONTROLLERTOUCHPADUP:
+                printf("Controller touchpad %d released at (%f, %f)\n", e.ctouchpad.touchpad,
+                       e.ctouchpad.x, e.ctouchpad.y);
+                snprintf(input_text, sizeof(input_text), "Controller touchpad %d released at (%f, %f)", e.ctouchpad.touchpad,
+                       e.ctouchpad.x, e.ctouchpad.y);
+                break;
+            case SDL_CONTROLLERTOUCHPADMOTION:
+                printf("Controller touchpad %d moved to (%f, %f)\n", e.ctouchpad.touchpad,
+                       e.ctouchpad.x, e.ctouchpad.y);
+                snprintf(input_text, sizeof(input_text), "Controller touchpad %d moved to (%f, %f)", e.ctouchpad.touchpad,
+                       e.ctouchpad.x, e.ctouchpad.y);
+                break;
+            default:
+                break;
+        }
     }
-  }
 }
