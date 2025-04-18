@@ -17,9 +17,9 @@ tar -xzf aarch64-buildroot-linux-gnu_sdk-buildroot.tar.gz
 
 then go set some variables:
 ```sh
-export PATH=$PWD/aarch64-buildroot-linux-gnu_sdk-buildroot/bin:$PATH
-export SYSROOT=$PWD/aarch64-buildroot-linux-gnu_sdk-buildroot/aarch64-buildroot-linux-gnu/sysroot
-alias aarch64-gcc="aarch64-buildroot-linux-gnu-gcc --sysroot=$SYSROOT"
+
+export PATH=/home/codeasm/games/anbernic/SDK/knulli-sdk/build/aarch64-buildroot-linux-gnu_sdk-buildroot/bin:$PATH
+export SYSROOT=/home/codeasm/games/anbernic/SDK/knulli-sdk/build/aarch64-buildroot-linux-gnu_sdk-buildroot/aarch64-buildroot-linux-gnu/sysroot
 
 export CC="aarch64-buildroot-linux-gnu-gcc"
 export CXX="aarch64-buildroot-linux-gnu-g++"
@@ -28,6 +28,7 @@ export LD="aarch64-buildroot-linux-gnu-ld"
 export STRIP="aarch64-buildroot-linux-gnu-strip"
 export PKG_CONFIG_PATH="$SYSROOT/usr/lib/pkgconfig"
 export PKG_CONFIG_SYSROOT_DIR="$SYSROOT"
+
 ```
 Yes, I use a script for this, might publish, need to research if any of the above is actually needed.
 
@@ -55,6 +56,8 @@ Just run the program, quit by pressing and releasing button 11/16 (F) on the Anb
 - [jamesMcMeex](https://github.com/jamesMcMeex) - James, Thanks for your H700 fork, which I adapted for this project. Your code worked seamlessly on both the stock OS and Knulli OS.  
 - [knulli](https://knulli.org/) - Thanks team behind Knulli, for your amazing handheld distro, which is based on Batocera. It makes the handheld so much cleaner to run and play games on. And lets not forget about the toolchain you folks publicly share too.
 - Trash80 for their awesome music, and apparently font. Hope for now its ok I kept the font in the sources.
+- acmeplus - development help how to launch an application and revealed it was a user error, not SDL2 lib issue
+- [chrizzo-hb](https://github.com/chrizzo-hb) - Christoph Greulich at the Knulli Discord for suggestions where to look for to properly start my app.
 - And any other people in my life who support me, or find me a bit annoying. Thanks for sticking with me and replying to my silly questions or messages.
 
 ## License
