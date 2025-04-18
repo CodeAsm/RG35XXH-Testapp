@@ -37,10 +37,23 @@ run this to build:
 make CC=$CC CXX=$CXX AR=$AR LD=$LD STRIP=$STRIP PKG_CONFIG_PATH=$PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR=$PKG_CONFIG_SYSROOT_DIR VERBOSE=1
 ```
 
+For other distro's, I asume you need their well respected SDK/Toolchain, as they may link differently to stuff.
 
-## Running
+## Installing and Running
 
-Just run the program, quit by pressing and releasing button 11/16 (F) on the Anbernic RG35XX H.
+Copy the TestApp to the ``/userdata/roms/tools/Tester folder`` (create the Tester folder) and copy ``TestApp.sh`` to ``/userdata/roms/tools/``
+After you rescan for new games and apps, it should show up as TestApp.
+Now just run the program, quit by pressing and releasing button 11/16 (F) on the Anbernic RG35XX H.
+
+An installer and easier instalation would be cool. TBD.
+
+helpfull extra commands:
+```sh
+scp TestApp root@192.168.2.19:/userdata/roms/tools/Tester/
+scp Tester/Tester.sh root@192.168.2.19:/userdata/roms/tools/TestApp.sh
+```
+without security turned on, the password is ``linux`` for the root user.
+Check the security page under system settings to see the root password if you enabled more security (which you should).
 
 ## Todo
 
